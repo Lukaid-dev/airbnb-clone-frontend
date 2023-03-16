@@ -1,4 +1,5 @@
 import { Avatar, Box, Button, HStack, IconButton, LightMode, Menu, MenuButton, MenuItem, MenuList, Stack, useColorMode, useColorModeValue, useDisclosure, useToast } from "@chakra-ui/react";
+import { useQueryClient } from "@tanstack/react-query";
 import { FaAirbnb, FaMoon, FaSun } from "react-icons/fa";
 import { logOut } from "../api";
 import useUser from "../lib/useUser";
@@ -16,6 +17,7 @@ export default function Header() {
   // light mode일때 FaMoon, dark mode일때 FaSun
   const Icon = useColorModeValue(FaMoon , FaSun);
   const toast = useToast();
+  const queryClient = useQueryClient();
   const onLogOut = async () => {
     const toastId = toast({
       title: "Login out...",
@@ -24,7 +26,8 @@ export default function Header() {
       position: "top",
       duration: 2000,
     });
-    const response = await logOut();
+    await logOut();
+    queryClient.refetchQueries(["me"]);
     toast.update(toastId, {
       status: "success",
       title: "done",
